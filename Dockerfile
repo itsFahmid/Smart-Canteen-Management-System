@@ -29,8 +29,9 @@ COPY . .
 # Re-run composer scripts
 RUN composer dump-autoload --optimize
 
-# Create SQLite database and set permissions
-RUN touch database/database.sqlite \
+# Create SQLite database, .env file, and set permissions
+RUN cp .env.example .env \
+    && touch database/database.sqlite \
     && chmod -R 775 storage bootstrap/cache database
 
 # Expose port
@@ -38,6 +39,7 @@ EXPOSE 8000
 
 # Start script: generate key if needed, migrate, then serve
 CMD sh -c "\
+    cp -n .env.example .env 2>/dev/null || true && \
     if [ -z \"$APP_KEY\" ]; then php artisan key:generate --force; fi && \
     php artisan config:clear && \
     php artisan migrate --seed --force && \
