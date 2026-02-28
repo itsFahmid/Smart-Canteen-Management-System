@@ -24,9 +24,12 @@ return [
         'http://localhost:5173',
         'http://localhost:3000',
         'http://127.0.0.1:5173',
+        'https://smart-canteen-management-system-three.vercel.app',
     ]),
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        'https://smart-canteen-management-system.*\.vercel\.app',
+    ],
 
     'allowed_headers' => ['*'],
 
