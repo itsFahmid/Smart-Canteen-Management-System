@@ -29,14 +29,16 @@ COPY . .
 # Re-run composer scripts
 RUN composer dump-autoload --optimize
 
-# Create SQLite database and run migrations
-RUN touch database/database.sqlite
-
-# Set permissions
-RUN chmod -R 775 storage bootstrap/cache database
+# Create SQLite database and set permissions
+RUN touch database/database.sqlite \
+    && chmod -R 775 storage bootstrap/cache database
 
 # Expose port
 EXPOSE 8000
 
-# Start command - migrate on boot, then serve
-CMD php artisan migrate --seed --force 2>/dev/null; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Start script: generate key if needed, migrate, then serve
+CMD sh -c "\
+    if [ -z \"$APP_KEY\" ]; then php artisan key:generate --force; fi && \
+    php artisan config:clear && \
+    php artisan migrate --seed --force && \
+    php artisan serve --host=0.0.0.0 --port=\${PORT:-8000}"
