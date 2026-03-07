@@ -7,6 +7,7 @@ import {
 import { AuthProvider, useAuth } from '@/app/contexts/AuthContext';
 import { AppProvider } from '@/app/contexts/AppContext';
 
+import { HomePage } from '@/app/pages/HomePage';
 import { LoginPage } from '@/app/pages/LoginPage';
 import { CustomerMenuPage } from '@/app/pages/CustomerMenuPage';
 import { CartPage } from '@/app/pages/CartPage';
@@ -24,7 +25,7 @@ const ProtectedRoute: React.FC<{
   const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (user && !allowedRoles.includes(user.role)) {
@@ -43,9 +44,12 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
-      {/* Public Route */}
+      {/* Home — always public */}
+      <Route path="/" element={<HomePage />} />
+
+      {/* Login / Register */}
       <Route
-        path="/"
+        path="/login"
         element={
           isAuthenticated ? (
             user?.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
